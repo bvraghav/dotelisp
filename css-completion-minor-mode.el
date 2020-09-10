@@ -79,8 +79,8 @@
 
 (defun bvr/css/any-attr-p (attr &rest attrs)
   (or (bvr/css/point-at-attr-p attr)
-      (and (apply #'bvr/css/any-attr-p attrs)
-           attrs)))
+      (and attrs
+           (apply #'bvr/css/any-attr-p attrs))))
 
 (defun bvr/css/completable-p ()
   (apply #'bvr/css/any-attr-p
