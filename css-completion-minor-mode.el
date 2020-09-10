@@ -1,4 +1,4 @@
-;;; css-helpers.el --- Browse info index with helm -*- lexical-binding: t -*-
+;;; css-completion-minor-mode.el --- CSS class completion for html-like mode. -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2020 B.V. Raghav <r@bvraghav.com>
 
@@ -104,6 +104,6 @@
 
 (define-minor-mode css-completion-minor-mode
   "Complete css classes in the project"
-  :keymap bvr/css/keymap))
+  :keymap bvr/css/keymap)
 
 (provide 'css-completion-minor-mode)
