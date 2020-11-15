@@ -17,7 +17,7 @@
 
 ;;; Code:
 
-(require 'cl)
+(require 'cl-lib)
 
 ;; (defun bvr/css/complete-class ()
 ;;   (interactive)
@@ -31,6 +31,11 @@
 ;;     (insert new-word)))
 
 (defgroup bvr/css nil "BVR's CSS Helpers group")
+(defcustom bvr/css/search-paths '(".")
+  "Set of paths to search. Useful to override project level ignores, like searching for `node_modules/tachyons' in a npm package with `node_modules' ignored under `.gitignore'"
+  :group 'bvr/css
+  :type '(repeat directory))
+
 (defcustom bvr/css/valid-modes '(mhtml-mode)
   "Set of applicable modes for css class completion-at-point"
   :group 'bvr/css
@@ -42,14 +47,36 @@
   :group 'bvr/css
   :type '(repeat string))
 
+(defcustom bvr/css/classname-regex
+  "\\.([A-Za-z][-_:A-Z0-9a-z]+)[, {]"
+  "Regex pattern for matching classname in files"
+  :group 'bvr/css
+  :type 'string)
+
+(defconst bvr/css/buffer "*bvr/css/class-list*")
+
+(defun bvr/css/compute-paths ()
+  (string-join
+
+   (mapcar (lambda (name)
+             (if (file-name-absolute-p name) name
+
+               (concat
+                (projectile-ensure-project (projectile-project-root))
+                name)))
+           bvr/css/search-paths)
+
+   " "))
+
 (defun bvr/css/class-list ()
-  (with-current-buffer "yabuf" (erase-buffer))
+  (when (get-buffer bvr/css/buffer)
+    (with-current-buffer bvr/css/buffer (erase-buffer)))
   (call-process-shell-command
    (format "rg -oINr '$1' --type-add 'css:css' -t 'css' '%s' %s | sort -u"
-           "\\.([A-Za-z][-_:A-Z0-9a-z]{2,})[, {]"
-           (projectile-ensure-project (projectile-project-root)))
-   nil "yabuf")
-  (with-current-buffer "yabuf"
+           bvr/css/classname-regex
+           (bvr/css/compute-paths))
+   nil bvr/css/buffer)
+  (with-current-buffer bvr/css/buffer
     (split-string (buffer-string) "\n")))
 
 (defun bvr/css/complete-class ()
