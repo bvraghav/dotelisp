@@ -55,21 +55,22 @@
   "List of capture styles"
   :type '(list string))
 
-(defvar screen-capture--binary
+(defun screen-capture-binary ()
   (expand-file-name screen-capture-binary))
 
-(defun screen-capture (arg)
+(defun screen-capture (style-or-dest &optional minimize-frame)
   (interactive
    (list (completing-read "Screen Capture: "
                           (screen-capture--options)
-                          nil t)))
-  (if (member arg (screen-capture--destination-names))
-      (progn (screen-capture--set-dest arg)
+                          nil t)
+         (prefix-numeric-value current-prefix-arg)))
+  (if (member style-or-dest (screen-capture--destination-names))
+      (progn (screen-capture--set-dest style-or-dest)
              (call-interactively #'screen-capture))
-    (and (message "Calling process: %s %s" screen-capture--binary arg)
-         (call-process screen-capture--binary nil nil nil arg)
-         ;; (kill-new (screen-captured-last))
-         )))
+    (and (message "Calling process: %s %s" (screen-capture-binary) style-or-dest)
+         (call-process (screen-capture-binary) nil nil nil style-or-dest)
+         (call-process "i3-msg" nil nil nil "floating enable")
+         (call-process "i3-msg" nil nil nil "resize set 300 100"))))
 
 (defun screen-captured-last ()
   (interactive)
@@ -94,11 +95,11 @@
              (get-dest (lambda (x) (file-truename (car x))))
              (dest-filter (lambda (x)
                             (and (stringp (nth 1 x))
-                                 (not (string= dest (get-dest x))))))
+                                 (not (string= dest (funcall get-dest x))))))
              (dest-siblings (directory-files-and-attributes default-directory))
-             (dest-candidates (seq-filter #'dest-filter dest-siblings))
+             (dest-candidates (seq-filter dest-filter dest-siblings))
              (candidates-to-alist (lambda (x) (cons (car x) (cadr x))))
-             (dest-alist (mapcar #'candidates-to-alist dest-candidates)))
+             (dest-alist (mapcar candidates-to-alist dest-candidates)))
         dest-alist)))
 
 (defun screen-capture--options ()
@@ -116,7 +117,8 @@
            (cdr (assoc location (screen-capture--get-destinations))))))
     (make-directory true-dest t)
     (make-symbolic-link true-dest true-loc t)
-    (message "screen-capture--set-dest: %s -> %s" screen-capture-destination location)
+    (message "screen-capture--set-dest: %s -> %s"
+             screen-capture-destination location)
     (make-symbolic-link location screen-capture-destination t)))
 
 (defun screen-capture--time-ascending (x y)
