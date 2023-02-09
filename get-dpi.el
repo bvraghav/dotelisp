@@ -7,9 +7,8 @@
                                                  (point-max)))
            (words (split-string line " "))
            (sz (nth 3 words))
-           (sx (first (split-string sz "x")))
-           (sy (second (split-string sz "x")))
-           (sy (first (split-string sy "+")))
+           (sx (first (split-string sz "[x+]" )))
+           (sy (second (split-string sz "[x+]" )))
            (lx (caddr (reverse words)))
            (ly (first (reverse words))))
       (pcase-let ((`(,sx ,sy ,lx ,ly) (mapcar #'string-to-number 
