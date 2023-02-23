@@ -5,13 +5,14 @@
 
 (defun fill-line (arg)
   (interactive "P")
-  (let* ((c (if arg (read-char "Fill Char: ")
-              fill-line-fill-char))
-         (n (max 0 (- (+ (pos-bol) fill-column) (point))))
-         (s (string-pad "" n c)))
-    (message "%s %s %s" c n s)
-    (insert s)))
+  (let* ((c (and arg (read-char "Fill Char: "))))
+    (insert (fill-line-get-filler c))))
 
+(defun fill-line-get-filler (&optional fill-char prefix)
+  (let* ((n (- (+ (pos-bol) fill-column) (point)))
+         (c (or fill-char fill-line-fill-char))
+         (p (or prefix "")))
+    (string-pad p n c)))
 
 
 (provide 'fill-line)
