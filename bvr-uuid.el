@@ -17,4 +17,4 @@
     (insert (number-to-string snum))))
 
 (provide 'bvr-uuid)
-;;; bvr_uuid.el ends here
+;;; bvr-uuid.el ends here
