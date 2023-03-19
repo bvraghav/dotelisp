@@ -41,40 +41,40 @@ hierarchy, it looks first for `.eslintignore' and then for
           (locate-dominating-file file ".eslintrc.yml")))))
 
 
-
-(flycheck-define-checker bvr-javascript-eslint
+(flycheck-def-executable-var bvr-javascript-eslint "eslint")
+(flycheck-define-command-checker 'bvr-javascript-eslint
   "A Javascript syntax and style checker using eslint.
 
 See URL `https://eslint.org/'."
-  :command ("eslint" "--format=json"
-            (option-list "--rulesdir" flycheck-eslint-rules-directories)
-            (eval flycheck-eslint-args)
-            "--stdin" "--stdin-filename" source)
+  :command '("eslint" "--format=json"
+             (option-list "--rulesdir" flycheck-eslint-rules-directories)
+             (eval flycheck-eslint-args)
+             "--stdin" "--stdin-filename" source)
   :standard-input t
-  :error-parser flycheck-parse-eslint
-  :enabled (lambda () (flycheck-eslint-config-exists-p))
-  :modes (js-mode js-jsx-mode js2-mode js2-jsx-mode js3-mode rjsx-mode
-                  typescript-mode js-ts-mode typescript-ts-mode tsx-ts-mode)
-  :working-directory bvr-flycheck-eslint--find-working-directory
+  :error-parser 'flycheck-parse-eslint
+  :enabled #'(lambda () (flycheck-eslint-config-exists-p))
+  :modes '(js-mode js-jsx-mode js2-mode js2-jsx-mode js3-mode rjsx-mode
+                   typescript-mode js-ts-mode typescript-ts-mode tsx-ts-mode)
+  :working-directory #'bvr-flycheck-eslint--find-working-directory
   :verify
-  (lambda (_)
-    (let* ((default-directory
-             (flycheck-compute-working-directory 'bvr-javascript-eslint))
-           (have-config (flycheck-eslint-config-exists-p)))
-      (list
-       (flycheck-verification-result-new
-        :label "config file"
-        :message (if have-config "found" "missing or incorrect")
-        :face (if have-config 'success '(bold error))))))
+  #'(lambda (_)
+      (let* ((default-directory
+               (flycheck-compute-working-directory 'bvr-javascript-eslint))
+             (have-config (flycheck-eslint-config-exists-p)))
+        (list
+         (flycheck-verification-result-new
+          :label "config file"
+          :message (if have-config "found" "missing or incorrect")
+          :face (if have-config 'success '(bold error))))))
   :error-explainer
-  (lambda (err)
-    (let ((error-code (flycheck-error-id err))
-          (url "https://eslint.org/docs/rules/%s"))
-      (and error-code
-           ;; skip non-builtin rules
-           (not ;; `seq-contains-p' is only in seq >= 2.21
-            (with-no-warnings (seq-contains error-code ?/)))
-           `(url . ,(format url error-code))))))
+  #'(lambda (err)
+      (let ((error-code (flycheck-error-id err))
+            (url "https://eslint.org/docs/rules/%s"))
+        (and error-code
+             ;; skip non-builtin rules
+             (not ;; `seq-contains-p' is only in seq >= 2.21
+              (with-no-warnings (seq-contains error-code ?/)))
+             `(url . ,(format url error-code))))))
 
 
 (add-to-list 'flycheck-checkers 'bvr-javascript-eslint)
