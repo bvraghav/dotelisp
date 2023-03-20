@@ -30,15 +30,18 @@ This will be the directory that contains the `node_modules'
 directory.  If no such directory is found in the directory
 hierarchy, it looks first for `.eslintignore' and then for
 `.eslintrc' files to detect the project root."
-  (let* ((file (or (buffer-file-name) default-directory)))
-    (when file
-      (or (locate-dominating-file file "node_modules")
-          (locate-dominating-file file ".eslintignore")
-          (locate-dominating-file file ".eslintrc")
-          (locate-dominating-file file ".eslintrc.js")
-          (locate-dominating-file file ".eslintrc.json")
-          (locate-dominating-file file ".eslintrc.yaml")
-          (locate-dominating-file file ".eslintrc.yml")))))
+  (let* ((file (or (buffer-file-name) default-directory))
+         (file (when file
+                 (or (locate-dominating-file file "node_modules")
+                     (locate-dominating-file file ".eslintignore")
+                     (locate-dominating-file file ".eslintrc")
+                     (locate-dominating-file file ".eslintrc.js")
+                     (locate-dominating-file file ".eslintrc.json")
+                     (locate-dominating-file file ".eslintrc.yaml")
+                     (locate-dominating-file file ".eslintrc.yml")))))
+    ;; (when file
+    ;;   (message "Found working directory: %s" file))
+    file))
 
 
 (flycheck-def-executable-var bvr-javascript-eslint "eslint")
@@ -49,7 +52,7 @@ See URL `https://eslint.org/'."
   :command '("eslint" "--format=json"
              (option-list "--rulesdir" flycheck-eslint-rules-directories)
              (eval flycheck-eslint-args)
-             "--stdin" "--stdin-filename" source)
+             "--stdin-filename" source)
   :standard-input t
   :error-parser 'flycheck-parse-eslint
   :enabled #'(lambda () (flycheck-eslint-config-exists-p))
