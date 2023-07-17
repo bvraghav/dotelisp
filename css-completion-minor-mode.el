@@ -35,7 +35,6 @@
 
 (require 'cl-lib)
 (require 'projectile)
-(require 'subr)
 (require 'subr-x)
 
 ;; (defun bvr/css/complete-class ()
