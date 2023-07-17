@@ -1,5 +1,12 @@
 ;;; css-completion-minor-mode.el --- CSS class completion for html-like mode. -*- lexical-binding: t -*-
 
+;; Author: B.V. Raghav
+;; Maintainer: B.V. Raghav
+;; Version: v0
+;; Package-Requires: (cl-lib projectile)
+;; Homepage: https://github.com/bvraghav/dotelisp
+;; Keywords: css, completion
+
 ;; Copyright (C) 2020 B.V. Raghav <r@bvraghav.com>
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -15,6 +22,10 @@
 ;; You should have received a copy of the GNU General Public License
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+;;; Depends :
+
+;; 
+
 ;;; Commentary:
 
 ;; This extension relies on `rg' being installed on the
@@ -23,11 +34,14 @@
 ;;; Code:
 
 (require 'cl-lib)
+(require 'projectile)
+(require 'subr)
+(require 'subr-x)
 
 ;; (defun bvr/css/complete-class ()
 ;;   (interactive)
 ;;   (let ((new-word (completing-read "CSS Class: "
-;;                                    (bvr/css/class-list) 
+;;                                    (bvr/css/class-list)
 ;;                                    nil nil (word-at-point t))))
 ;;     (cl-destructuring-bind (beg . end)
 ;;         (bounds-of-thing-at-point 'word)
@@ -37,7 +51,7 @@
 
 (defgroup bvr/css nil "BVR's CSS Helpers group.")
 (defcustom bvr/css/search-paths '(".")
-  "Set of paths to search. 
+  "Set of paths to search.
 
 Useful to override project level ignores, like searching for
 `node_modules/tachyons' in a npm package with `node_modules'
@@ -156,3 +170,4 @@ CMD is a forwarded closure."
 
 (provide 'css-completion-minor-mode)
 ;;; css-completion-minor-mode.el ends here
+
