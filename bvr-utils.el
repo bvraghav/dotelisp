@@ -58,6 +58,17 @@ https://lists.gnu.org/archive/html//help-gnu-emacs/2021-11/msg00186.html"
 		       nil))
 	   finally (cl-return n)))
 
+(defun camel-to-title-case (txt)
+  "Convert TXT from `camelCase' to `Title Case'."
+  (let ((case-fold-search nil))
+    (capitalize
+     (replace-regexp-in-string
+      "\\([A-Z]\\)"
+      " \\1"
+      txt
+      t))))
+
+
 (provide 'bvr-utils)
 
 ;;; bvr-utils.el ends here
