@@ -10,21 +10,29 @@
     (when (< 0 (first (wc-count)))
       (gd--compute-dpi))))
 
+;; (defun gd--compute-dpi ()
+;;   (let* ((line (buffer-substring-no-properties (point-min)
+;;                                                (point-max)))
+;;          (words (split-string line " "))
+;;          (n (max (or (cl-position "connected" words :test #'equal) 0)
+;;                  (or (cl-position "primary" words :test #'equal) 0)))
+;;          (sz (nth (1+ n) words))
+;;          (sx (first (split-string sz "[x+]" )))
+;;          (sy (second (split-string sz "[x+]" )))
+;;          (lx (caddr (reverse words)))
+;;          (ly (first (reverse words))))
+;;     (pcase-let ((`(,sx ,sy ,lx ,ly) (mapcar #'string-to-number 
+;;                                             `(,sx ,sy ,lx ,ly))))
+;;       (* 0.5 25.4 (+ (/ sx lx 1.0) (/ sy ly 1.0))))
+;;     ))
+
 (defun gd--compute-dpi ()
-  (let* ((line (buffer-substring-no-properties (point-min)
-                                               (point-max)))
-         (words (split-string line " "))
-         (n (max (or (cl-position "connected" words :test #'equal) 0)
-                 (or (cl-position "primary" words :test #'equal) 0)))
-         (sz (nth (1+ n) words))
-         (sx (first (split-string sz "[x+]" )))
-         (sy (second (split-string sz "[x+]" )))
-         (lx (caddr (reverse words)))
-         (ly (first (reverse words))))
-    (pcase-let ((`(,sx ,sy ,lx ,ly) (mapcar #'string-to-number 
-                                            `(,sx ,sy ,lx ,ly))))
-      (* 0.5 25.4 (+ (/ sx lx 1.0) (/ sy ly 1.0))))
-    ))
+  (pcase-let
+      ((`(x0 y0 ,W ,H) (frame-monitor-attribute 'geometry))
+       (`(,Wmm ,Hmm) (frame-monitor-attribute 'mm-size)))
+    (* 0.5 25.4
+       (+ (/ W Wmm 1.0)
+          (/ H Hmm 1.0)))))
 
 (defun insert-dpi ()
   (interactive)
