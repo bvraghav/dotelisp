@@ -1,3 +1,4 @@
+(require 'cl-lib)
 
 (defun get-dpi ()
   (or (get-dpi-connected) 0))
@@ -7,7 +8,7 @@
     
     (insert (shell-command-to-string "xrandr"))
     (keep-lines " connected" (point-min) (point-max))
-    (when (< 0 (first (wc-count)))
+    (when (< 0 (cl-first (wc-count)))
       (gd--compute-dpi))))
 
 ;; (defun gd--compute-dpi ()
