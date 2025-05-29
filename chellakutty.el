@@ -35,7 +35,7 @@
   (interactive)
   (message "--- Chellakutty ---")
   (pcase-dolist (`(,dt ,w0) '(("2025-03-09 IST" 2430)
-                              ("2025-05-06 IST" 4390)))
+                              ("2025-05-02 IST" 4390)))
     (let* ((d (abs(org-time-stamp-to-now dt)))
            (nwi (/ d 7))
            (nwr (% d 7))
